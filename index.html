@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Hub Demo</title>
+<style>
+*{box-sizing:border-box}body{margin:0;overflow:hidden;font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);background-size:300% 300%;
+animation:bg 10s linear infinite;color:#fff}
+@keyframes bg{0%{background-position:0 0}100%{background-position:300% 300%}}
+#menu{position:absolute;left:80px;top:60px;width:340px;border-radius:18px;
+background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.2);box-shadow:0 0 25px rgba(0,255,255,.25)}
+#head{padding:14px;text-align:center;font-weight:bold;cursor:move;
+background:linear-gradient(90deg,#00e5ff,#7c4dff)}
+.content{padding:14px}
+.row{display:flex;justify-content:space-between;align-items:center;
+padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.switch{width:44px;height:22px;background:#555;border-radius:11px;position:relative}
+.switch:before{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;
+background:#fff;border-radius:50%;transition:.3s}
+.on{background:#00e676}.on:before{left:24px}
+.bar{height:8px;background:#333;border-radius:8px;overflow:hidden;margin-top:4px}
+.fill{height:100%;background:linear-gradient(90deg,#00e5ff,#00e676)}
+.stat{margin-top:10px;font-size:13px}
+.fans{display:flex;justify-content:space-between;padding:12px}
+.fan{width:70px;height:70px;border:2px solid #88f;border-radius:50%;position:relative;
+animation:spin 2s linear infinite;box-shadow:0 0 15px #4cf}
+.fan:before,.fan:after{content:"";position:absolute;background:#8cf;border-radius:40px}
+.fan:before{width:12px;height:30px;left:28px;top:4px;transform-origin:50% 31px;
+box-shadow:0 36px #8cf}
+.fan:after{width:30px;height:12px;left:4px;top:28px;box-shadow:36px 0 #8cf}
+@keyframes spin{to{transform:rotate(360deg)}}
+.petal{position:absolute;top:-20px;color:#ffb7d5;user-select:none;
+animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.7}}
+</style>
+</head>
+<body>
+<div id="menu">
+<div id="head">⚡ SYSTEM HUB DEMO</div>
+<div class="fans"><div class="fan"></div><div class="fan"></div></div>
+<div class="content" id="rows"></div>
+</div>
+<script>
+const items=[
+"Tối ưu máy","Game Mode","Turbo Fan","RGB Lighting",
+"Dọn RAM (Demo)","FPS Monitor","CPU Boost","Sakura Effect"
+];
+const rows=document.getElementById("rows");
+items.forEach((t,i)=>{
+ let r=document.createElement("div");
+ r.className="row";
+ r.innerHTML=`<span>${t}</span><div class="switch ${i<4?'on':''}"></div>`;
+ rows.appendChild(r);
+});
+["CPU","RAM","FPS"].forEach((n,i)=>{
+ let d=document.createElement("div");
+ d.className="stat";
+ d.innerHTML=`${n}: <span id="${n}v"></span>
+ <div class="bar"><div class="fill" id="${n}b"></div></div>`;
+ rows.appendChild(d);
+});
+function tick(){
+ const cpu=20+Math.random()*60;
+ const ram=30+Math.random()*50;
+ const fps=90+Math.random()*60;
+ [["CPU",cpu],["RAM",ram],["FPS",fps]].forEach(([n,v])=>{
+  document.getElementById(n+"v").textContent=n=="FPS"?Math.round(v):Math.round(v)+"%";
+  document.getElementById(n+"b").style.width=(n=="FPS"?v/1.5:v)+"%";
+ });
+}
+setInterval(tick,900);tick();
+
+// drag
+const m=document.getElementById("menu"),h=document.getElementById("head");
+let dx,dy,drag=false;
+h.onmousedown=e=>{drag=true;dx=e.clientX-m.offsetLeft;dy=e.clientY-m.offsetTop;}
+document.onmousemove=e=>{if(drag){m.style.left=e.clientX-dx+"px";m.style.top=e.clientY-dy+"px";}}
+document.onmouseup=()=>drag=false;
+
+// sakura
+setInterval(()=>{
+ let p=document.createElement("div");
+ p.className="petal";
+ p.textContent="🌸";
+ p.style.left=Math.random()*window.innerWidth+"px";
+ p.style.animationDuration=(5+Math.random()*5)+"s";
+ p.style.fontSize=(14+Math.random()*14)+"px";
+ document.body.appendChild(p);
+ setTimeout(()=>p.remove(),10000);
+},250);
+</script>
+</body>
+</html>
